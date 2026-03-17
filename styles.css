@@ -1,0 +1,378 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg: #0f0f0f;
+  --surface: #1a1a1a;
+  --surface2: #252525;
+  --border: #333;
+  --text: #f0f0f0;
+  --text-muted: #888;
+  --accent: #1db954;
+  --accent-hover: #1ed760;
+  --danger: #e74c3c;
+  --danger-hover: #c0392b;
+  --warning: #f39c12;
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#app {
+  width: 100%;
+  max-width: 480px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 20px;
+}
+
+/* ── Screen transitions ── */
+.screen {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 20px;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Typography ── */
+h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+label {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ── Cards / Sections ── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ── Inputs ── */
+input[type="text"],
+input[type="url"] {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 1rem;
+  padding: 12px 14px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+input[type="text"]:focus,
+input[type="url"]:focus {
+  border-color: var(--accent);
+}
+
+input::placeholder {
+  color: var(--text-muted);
+}
+
+/* ── Buttons ── */
+button {
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 600;
+  border: none;
+  border-radius: var(--radius-sm);
+  transition: background 0.15s, transform 0.1s, opacity 0.15s;
+  outline: none;
+}
+
+button:active { transform: scale(0.97); }
+button:disabled { opacity: 0.4; cursor: not-allowed; }
+button:disabled:active { transform: none; }
+
+.btn-primary {
+  background: var(--accent);
+  color: #000;
+  padding: 14px 20px;
+  font-size: 1rem;
+  width: 100%;
+  border-radius: var(--radius);
+}
+.btn-primary:hover:not(:disabled) { background: var(--accent-hover); }
+
+.btn-secondary {
+  background: var(--surface2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 12px 20px;
+  font-size: 0.95rem;
+  width: 100%;
+  border-radius: var(--radius);
+}
+.btn-secondary:hover:not(:disabled) { background: var(--border); }
+
+.btn-danger {
+  background: var(--danger);
+  color: #fff;
+  padding: 14px 20px;
+  font-size: 1rem;
+  width: 100%;
+  border-radius: var(--radius);
+}
+.btn-danger:hover:not(:disabled) { background: var(--danger-hover); }
+
+.btn-sm {
+  padding: 10px 16px;
+  font-size: 0.9rem;
+  width: auto;
+  flex: 1;
+}
+
+.btn-icon {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  border-radius: var(--radius-sm);
+  flex: 1;
+}
+.btn-icon:hover:not(:disabled) { background: var(--border); }
+
+/* ── Status badges ── */
+.status-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.dot-ok  { background: var(--accent); }
+.dot-err { background: var(--danger); }
+.dot-off { background: var(--text-muted); }
+
+/* ── Timer presets ── */
+.preset-row {
+  display: flex;
+  gap: 8px;
+}
+
+.preset-btn {
+  flex: 1;
+  background: var(--surface2);
+  border: 2px solid var(--border);
+  color: var(--text);
+  padding: 10px;
+  font-size: 0.9rem;
+  border-radius: var(--radius-sm);
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.preset-btn.active {
+  border-color: var(--accent);
+  background: rgba(29,185,84,0.1);
+  color: var(--accent);
+}
+
+.preset-btn:hover:not(.active):not(:disabled) {
+  border-color: #555;
+}
+
+/* ── Big mute button ── */
+.mute-btn {
+  background: var(--accent);
+  color: #000;
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  padding: 40px 20px;
+  border-radius: var(--radius);
+  width: 100%;
+  line-height: 1.2;
+}
+.mute-btn:hover:not(:disabled) { background: var(--accent-hover); }
+
+/* ── Countdown ── */
+.countdown {
+  text-align: center;
+  padding: 24px 0;
+}
+
+.countdown-time {
+  font-size: 4rem;
+  font-weight: 800;
+  letter-spacing: -2px;
+  font-variant-numeric: tabular-nums;
+}
+
+.countdown-label {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-top: 4px;
+}
+
+/* ── Now playing bar ── */
+.now-playing {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 60px;
+}
+
+.now-playing-art {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  background: var(--surface2);
+  flex-shrink: 0;
+  object-fit: cover;
+}
+
+.now-playing-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.now-playing-track {
+  font-size: 0.9rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.now-playing-artist {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Quick actions ── */
+.quick-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* ── Alerts ── */
+.alert {
+  background: rgba(231,76,60,0.15);
+  border: 1px solid rgba(231,76,60,0.4);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  font-size: 0.9rem;
+  color: #f08080;
+}
+
+.alert-info {
+  background: rgba(29,185,84,0.1);
+  border-color: rgba(29,185,84,0.3);
+  color: var(--accent);
+}
+
+/* ── Header bar ── */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.app-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.text-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+.text-btn:hover { color: var(--text); background: var(--surface2); }
+
+/* ── Spotify connect special ── */
+.spotify-btn {
+  background: #1db954;
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 20px;
+  font-size: 1rem;
+  width: 100%;
+  border-radius: var(--radius);
+}
+.spotify-btn:hover:not(:disabled) { background: var(--accent-hover); }
+
+.spotify-logo {
+  width: 20px;
+  height: 20px;
+}
+
+/* ── Helper text ── */
+.helper {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.mt-auto { margin-top: auto; }
+.text-center { text-align: center; }
+.flex-row { display: flex; gap: 8px; }
+.w-full { width: 100%; }
