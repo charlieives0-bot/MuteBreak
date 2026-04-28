@@ -1,4 +1,4 @@
-# MuteBreak
+# Standby
 
 A web app that simultaneously mutes your Roku TV and starts Spotify when you need a quick break.
 
@@ -11,20 +11,13 @@ A web app that simultaneously mutes your Roku TV and starts Spotify when you nee
 
 ## Setup
 
-### 1. Spotify Developer App
-
-1. Go to [developer.spotify.com/dashboard](https://developer.spotify.com/dashboard)
-2. Create a new app (free)
-3. Add this redirect URI in the app settings:
-   ```
-   http://localhost:5173/
-   ```
-   (or whatever URL you're serving the app from — must match exactly)
-4. Copy the **Client ID**
-
-### 2. Roku IP
+### 1. Roku IP
 
 Find it on your Roku: **Settings → Network → About → IP address**
+
+### 2. Spotify
+
+Click **Connect Spotify** on the setup screen. The Spotify Client ID is already baked in — no developer account needed.
 
 ### 3. Serve the app
 
@@ -68,6 +61,6 @@ Then change the Roku IP in setup to `localhost:8010` and update `roku.js` to ski
 index.html   — HTML shell
 styles.css   — Dark theme styles
 app.js       — App logic, screen routing, UI binding
-spotify.js   — Spotify PKCE OAuth + API calls
+spotify.js   — Spotify PKCE OAuth + API calls (Client ID hardcoded)
 roku.js      — Roku ECP keypress commands
 ```

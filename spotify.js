@@ -1,4 +1,6 @@
 // ── Spotify PKCE OAuth ──────────────────────────────────────────────
+export const SPOTIFY_CLIENT_ID = 'c28017efe0924d4bbf5eaf5f30130c64';
+
 // Required scopes
 const SCOPES = [
   'user-modify-playback-state',
@@ -26,23 +28,20 @@ async function generateCodeChallenge(verifier) {
 }
 
 // ── Auth flow ────────────────────────────────────────────────────────
-export async function startSpotifyAuth(clientId) {
-  if (!clientId) throw new Error('Spotify Client ID is required');
-
+export async function startSpotifyAuth() {
   const verifier = await generateCodeVerifier();
   const challenge = await generateCodeChallenge(verifier);
 
   localStorage.setItem('spotify_code_verifier', verifier);
-  localStorage.setItem('spotify_client_id', clientId);
 
   const params = new URLSearchParams({
-    client_id: clientId,
+    client_id: SPOTIFY_CLIENT_ID,
     response_type: 'code',
     redirect_uri: REDIRECT_URI,
     scope: SCOPES,
     code_challenge_method: 'S256',
     code_challenge: challenge,
-    state: 'mutebreak',
+    state: 'standby',
   });
 
   window.location.href = `https://accounts.spotify.com/authorize?${params}`;
@@ -50,15 +49,14 @@ export async function startSpotifyAuth(clientId) {
 
 export async function handleSpotifyCallback(code) {
   const verifier = localStorage.getItem('spotify_code_verifier');
-  const clientId = localStorage.getItem('spotify_client_id');
 
-  if (!verifier || !clientId) throw new Error('Missing PKCE verifier or client ID');
+  if (!verifier) throw new Error('Missing PKCE verifier — try connecting Spotify again');
 
   const body = new URLSearchParams({
     grant_type: 'authorization_code',
     code,
     redirect_uri: REDIRECT_URI,
-    client_id: clientId,
+    client_id: SPOTIFY_CLIENT_ID,
     code_verifier: verifier,
   });
 
@@ -85,15 +83,14 @@ export async function handleSpotifyCallback(code) {
 }
 
 async function refreshAccessToken() {
-  const clientId = localStorage.getItem('spotify_client_id');
   const refreshToken = localStorage.getItem('spotify_refresh_token');
 
-  if (!clientId || !refreshToken) throw new Error('Cannot refresh: missing credentials');
+  if (!refreshToken) throw new Error('Cannot refresh: missing refresh token');
 
   const body = new URLSearchParams({
     grant_type: 'refresh_token',
     refresh_token: refreshToken,
-    client_id: clientId,
+    client_id: SPOTIFY_CLIENT_ID,
   });
 
   const res = await fetch('https://accounts.spotify.com/api/token', {
@@ -137,7 +134,7 @@ export async function getAccessToken() {
 
 export function clearSpotifyAuth() {
   ['spotify_access_token', 'spotify_refresh_token', 'spotify_expires_at',
-   'spotify_code_verifier', 'spotify_client_id'].forEach(k => localStorage.removeItem(k));
+   'spotify_code_verifier'].forEach(k => localStorage.removeItem(k));
 }
 
 export function isSpotifyConnected() {

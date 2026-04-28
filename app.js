@@ -6,6 +6,7 @@ import {
   resumePlayback,
   pausePlayback,
   getCurrentlyPlaying,
+  SPOTIFY_CLIENT_ID,
 } from './spotify.js';
 
 import {
@@ -102,17 +103,17 @@ function renderSetup() {
   return `
     <div class="screen">
       <div class="header">
-        <span class="app-name">MuteBreak</span>
+        <span class="app-name">Standby</span>
       </div>
 
       <div>
         <h1>Setup</h1>
-        <p class="helper" style="margin-top:6px">Connect your Roku and Spotify account to get started.</p>
+        <p class="helper" style="margin-top:6px">Two steps: enter your Roku's IP address, then connect Spotify.</p>
       </div>
 
       <div class="card">
         <div>
-          <label>Roku IP Address</label>
+          <label>Step 1 — Roku IP Address</label>
           <div style="display:flex;gap:8px">
             <input type="text" id="roku-ip-input"
               placeholder="192.168.1.x"
@@ -121,25 +122,14 @@ function renderSetup() {
             <button class="btn-secondary btn-sm" id="test-roku-btn" style="white-space:nowrap">Test</button>
           </div>
           <p class="helper" style="margin-top:6px">
-            Find it in Roku: Settings → Network → About → IP address
+            Find it on your Roku: Settings → Network → About → IP address
           </p>
         </div>
         ${rokuStatusHtml}
       </div>
 
       <div class="card">
-        <div>
-          <label>Spotify Client ID</label>
-          <input type="text" id="spotify-client-id"
-            placeholder="Paste your Spotify app Client ID"
-            value="${localStorage.getItem('spotify_client_id') || ''}"
-          />
-          <p class="helper" style="margin-top:6px">
-            Create a free app at
-            <a href="https://developer.spotify.com/dashboard" target="_blank" style="color:var(--accent)">developer.spotify.com</a>.
-            Set the redirect URI to: <code style="font-size:0.75rem;word-break:break-all">${window.location.origin + window.location.pathname}</code>
-          </p>
-        </div>
+        <label>Step 2 — Spotify</label>
         ${spotifyStatusHtml}
         ${spotifyOk
           ? `<button class="btn-secondary" id="disconnect-spotify-btn">Disconnect Spotify</button>`
@@ -156,7 +146,7 @@ function renderSetup() {
 
       ${canContinue
         ? `<button class="btn-primary" id="go-btn">Go to Main Screen →</button>`
-        : `<button class="btn-primary" disabled>Complete setup above to continue</button>`
+        : `<button class="btn-primary" disabled>Complete steps above to continue</button>`
       }
     </div>
   `;
@@ -195,14 +185,9 @@ function bindSetup() {
 
   // Spotify connect
   document.getElementById('connect-spotify-btn')?.addEventListener('click', async () => {
-    const clientId = document.getElementById('spotify-client-id')?.value.trim();
-    if (!clientId) {
-      showError('setup-error', 'Enter your Spotify Client ID first.');
-      return;
-    }
     hideError('setup-error');
     try {
-      await startSpotifyAuth(clientId);
+      await startSpotifyAuth(SPOTIFY_CLIENT_ID);
     } catch (err) {
       showError('setup-error', err.message);
     }
@@ -231,7 +216,7 @@ function renderIdle() {
   return `
     <div class="screen">
       <div class="header">
-        <span class="app-name">MuteBreak</span>
+        <span class="app-name">Standby</span>
         <div class="header-actions">
           <button class="text-btn" id="setup-link">Setup</button>
         </div>
@@ -340,7 +325,7 @@ function renderBreak() {
   return `
     <div class="screen">
       <div class="header">
-        <span class="app-name">MuteBreak</span>
+        <span class="app-name">Standby</span>
         <span class="helper">Break in progress</span>
       </div>
 
@@ -488,7 +473,7 @@ async function handleOAuthCallback() {
     return;
   }
 
-  if (code && state === 'mutebreak') {
+  if (code && state === 'standby') {
     // Clean up URL
     window.history.replaceState({}, '', window.location.pathname);
     try {
