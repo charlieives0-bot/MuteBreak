@@ -308,12 +308,24 @@ button:disabled:active { transform: none; }
   padding: 12px 14px;
   font-size: 0.9rem;
   color: #f08080;
+  white-space: pre-line;
+  line-height: 1.5;
 }
 
 .alert-info {
   background: rgba(29,185,84,0.1);
   border-color: rgba(29,185,84,0.3);
   color: var(--accent);
+}
+
+.alert-warn {
+  background: rgba(243,156,18,0.12);
+  border: 1px solid rgba(243,156,18,0.4);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  font-size: 0.875rem;
+  color: #f5c842;
+  line-height: 1.5;
 }
 
 /* ── Header bar ── */

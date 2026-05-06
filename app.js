@@ -111,6 +111,15 @@ function renderSetup() {
         <p class="helper" style="margin-top:6px">Two steps: enter your Roku's IP address, then connect Spotify.</p>
       </div>
 
+      ${window.location.protocol === 'https:'
+        ? `<div class="alert alert-warn">
+            <strong>Chrome step required for Roku:</strong> This page is served over HTTPS, but Roku uses plain HTTP.
+            Click the <strong>lock icon</strong> in Chrome's address bar → <strong>Site settings</strong> →
+            set <strong>Insecure content</strong> to <strong>Allow</strong>, then reload.
+           </div>`
+        : ''
+      }
+
       <div class="card">
         <div>
           <label>Step 1 — Roku IP Address</label>
@@ -279,35 +288,36 @@ function bindIdle() {
     btn.textContent = 'Starting…';
     hideError('idle-error');
 
-    try {
-      // Fire both simultaneously
-      const [, spotifyResult] = await Promise.allSettled([
-        mute(),
-        resumePlayback(),
-      ]);
+    const [rokuResult, spotifyResult] = await Promise.allSettled([
+      mute(),
+      resumePlayback(),
+    ]);
 
-      if (spotifyResult.status === 'rejected') {
-        const err = spotifyResult.reason;
-        // PLAYER_COMMAND_FAILED_NO_ACTIVE_DEVICE is a common reason
-        if (err?.reason === 'PLAYER_COMMAND_FAILED_NO_ACTIVE_DEVICE' || err?.status === 404) {
-          showError('idle-error',
-            'No active Spotify device found. Open Spotify on any device first, then try again.');
-          btn.disabled = false;
-          btn.textContent = '🎵 Mute Break';
-          return;
-        }
-        // Non-fatal Spotify error — continue anyway (mute may have worked)
-        console.warn('Spotify resume failed:', err?.message);
+    const errors = [];
+
+    if (rokuResult.status === 'rejected') {
+      errors.push(rokuResult.reason?.message || 'Roku command failed');
+    }
+
+    if (spotifyResult.status === 'rejected') {
+      const err = spotifyResult.reason;
+      if (err?.reason === 'PLAYER_COMMAND_FAILED_NO_ACTIVE_DEVICE' || err?.status === 404) {
+        errors.push('No active Spotify device found — open Spotify on any device first.');
+      } else {
+        errors.push(`Spotify: ${err?.message || 'playback failed'}`);
       }
+    }
 
-      state.breakStart = new Date();
-      state.addedMinutes = 0;
-      navigate('break');
-    } catch (err) {
-      showError('idle-error', err.message);
+    if (errors.length) {
+      showError('idle-error', errors.join('\n\n'));
       btn.disabled = false;
       btn.textContent = '🎵 Mute Break';
+      return;
     }
+
+    state.breakStart = new Date();
+    state.addedMinutes = 0;
+    navigate('break');
   });
 }
 

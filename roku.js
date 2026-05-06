@@ -37,7 +37,17 @@ export async function sendKeypress(key) {
       headers: { 'Content-Length': '0' },
     });
   } catch (err) {
-    // Network-level failure (device unreachable, CORS, etc.)
+    // Detect HTTPS → HTTP mixed-content block (the browser throws a generic TypeError)
+    const isHttps = window.location.protocol === 'https:';
+    if (isHttps) {
+      const e = new Error(
+        `Mixed content blocked: this page is served over HTTPS but Roku uses HTTP. ` +
+        `In Chrome, click the lock icon in the address bar → Site settings → ` +
+        `Insecure content → Allow, then reload the page.`
+      );
+      e.isMixedContent = true;
+      throw e;
+    }
     throw new Error(
       `Cannot reach Roku at ${ip}:8060. ` +
       `Check the IP and make sure you're on the same network. (${err.message})`
